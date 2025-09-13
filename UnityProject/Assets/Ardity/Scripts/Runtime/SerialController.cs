@@ -48,6 +48,8 @@ public class SerialController : MonoBehaviour
              "newest messages from the port.")]
     public bool dropOldMessage;
 
+    public bool logDroppedMessages = true;
+
     [Tooltip("Read all unread messages in the queue during every Update loop. " +
              "Only used when \"Message Listener\" is provided.")]
     public bool readAllMessages;
@@ -80,6 +82,7 @@ public class SerialController : MonoBehaviour
                                              reconnectionDelay,
                                              maxUnreadMessages,
                                              dropOldMessage,
+                                             logDroppedMessages,
                                              dtrEnable,
                                              rtsEnable);
         thread = new Thread(new ThreadStart(serialThread.RunForever));
@@ -166,6 +169,10 @@ public class SerialController : MonoBehaviour
         return (string) serialThread.ReadMessage();
     }
 
+    public void ClearQueue()
+    {
+        serialThread.ClearQueue();
+    }
     // ------------------------------------------------------------------------
     // Puts a message in the outgoing queue. The thread object will send the
     // message to the serial device when it considers it's appropriate.

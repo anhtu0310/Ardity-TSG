@@ -40,6 +40,8 @@ public class SerialControllerCustomDelimiter : MonoBehaviour
              "newest messages from the port.")]
     public bool dropOldMessage;
 
+    public bool logDroppedMessages = true;
+
     [Tooltip("ASCII value of the character to use as separator. It marks the end of a " +
              "message and the beginning of the next.")]
     public byte separator = 90;
@@ -65,6 +67,7 @@ public class SerialControllerCustomDelimiter : MonoBehaviour
                                                        maxUnreadMessages,
                                                        separator,
                                                        dropOldMessage,
+                                                       logDroppedMessages,
                                                        dtrEnable,
                                                        rtsEnable);
         thread = new Thread(new ThreadStart(serialThread.RunForever));
@@ -131,6 +134,10 @@ public class SerialControllerCustomDelimiter : MonoBehaviour
         return (byte[]) serialThread.ReadMessage();
     }
 
+    public void ClearQueue()
+    {
+        serialThread.ClearQueue();
+    }
     // ------------------------------------------------------------------------
     // Puts a message in the outgoing queue. The thread object will send the
     // message to the serial device when it considers it's appropriate.
