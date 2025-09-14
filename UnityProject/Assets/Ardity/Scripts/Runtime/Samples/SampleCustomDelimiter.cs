@@ -9,7 +9,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Text;
-
+using System;
 /**
  * Sample for reading using polling by yourself, and writing too.
  */
@@ -24,7 +24,13 @@ public class SampleCustomDelimiter : MonoBehaviour
 
         Debug.Log("Press the SPACEBAR to execute some action");
     }
-
+    byte GetCheckSum(int sum, byte[] data, int len)
+    {
+        int checksum = sum;
+        for (int i = 0; i < len; i++)
+            checksum += data[i];
+        return (byte)(checksum & 0xFF);
+    }
     // Executed each frame
     void Update()
     {
@@ -37,9 +43,12 @@ public class SampleCustomDelimiter : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Debug.Log("Sending some action");
+            byte[] data =new byte[] {(byte)'h',(byte)'e',(byte)'l',(byte)'l',(byte)'0'  };
+            // data[11]=GetCheckSum(0,data,11);
+            // Debug.Log("Sending "+data[11]);
             // Sends a 65 (ascii for 'A') followed by an space (ascii 32, which 
             // is configured in the controller of our scene as the separator).
-            serialController.SendSerialMessage(new byte[] { 65, 32 });
+            serialController.SendSerialMessage(data);
         }
 
 
@@ -52,9 +61,11 @@ public class SampleCustomDelimiter : MonoBehaviour
         if (message == null)
             return;
 
-        StringBuilder sb = new StringBuilder();
-        foreach (byte b in message)
-            sb.AppendFormat("(#{0}={1})    ", b, (char)b);
-        Debug.Log("Received some bytes, printing their ascii codes: " + sb);
+        // StringBuilder sb = new StringBuilder();
+        // foreach (byte b in message)
+        //     sb.AppendFormat("(#{0}={1})    ", b, (char)b);
+        // Debug.Log("Received some bytes, printing their ascii codes: " + sb);
+                Debug.Log("Received some bytes, printing their ascii codes: " + BitConverter.ToString(message));
+
     }
 }
